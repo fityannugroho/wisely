@@ -1,8 +1,8 @@
-export type CharSetNames = 'latin';
+export type CharSetNames = 'latin' | 'latin-1';
 export type CharSet = Record<string, string[] | undefined>;
 
 async function getCharSet(name: CharSetNames = 'latin'): Promise<CharSet> {
-  return import(`./charsets/${name}.json`) as Promise<CharSet>;
+  return import(`../charsets/${name}.json`) as Promise<CharSet>;
 }
 
 function getChar(char: string, charSet: CharSet, caseSensitive?: boolean) {
@@ -33,7 +33,7 @@ export default async function wisely(options: Options): Promise<string> {
     .map((char) => getChar(char, charSet, options.caseSensitive))
     .join('');
 
-  if (!options.phrases?.length) {
+  if (!options.phrases) {
     return censor(options.text);
   }
 

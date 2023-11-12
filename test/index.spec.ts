@@ -10,6 +10,7 @@ describe('wisely', () => {
     expect(result).not.equal('');
     expect(result).not.equal(text);
     expect(result).not.contain('will be');
+    expect(result).toHaveLength(text.length);
   });
 
   test.each([
@@ -22,6 +23,7 @@ describe('wisely', () => {
 
     expect(result).contain(unaffected);
     expect(result).not.match(new RegExp(`\\b${phrase}\\b`, 'i'));
+    expect(result).toHaveLength(text.length);
   });
 
   test.each([
@@ -37,9 +39,35 @@ describe('wisely', () => {
     notContains.split('').forEach((char) => {
       expect(result).not.contain(char);
     });
+
+    expect(result).toHaveLength(testText.length);
   });
 
   test('no phrases found in the text', async () => {
     expect(await wisely({ text, phrases: ['foo'] })).toEqual(text);
+  });
+
+  test('empty text', async () => {
+    expect(await wisely({ text: '' })).toEqual('');
+  });
+
+  test('empty phrases', async () => {
+    expect(await wisely({ text, phrases: [] })).toEqual(text);
+  });
+
+  test.each([
+    { testText: 'AaBbCcDdXxZz', contains: '\u00df\u00d7Zz', notContains: 'AaBbCcDdXx' },
+  ])('with specific charSet (latin-1): $testText', async ({ testText, contains, notContains }) => {
+    const result = await wisely({ text: testText, charSet: 'latin-1' });
+
+    contains.split('').forEach((char) => {
+      expect(result).contain(char);
+    });
+
+    notContains.split('').forEach((char) => {
+      expect(result).not.contain(char);
+    });
+
+    expect(result).toHaveLength(testText.length);
   });
 });

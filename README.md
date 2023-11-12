@@ -1,6 +1,6 @@
 # Wisely
 
-Replace sensitive phrases with special characters to avoid bans. Everyone is free to speak as long as they do so **wisely**.
+Obfuscating text or phrases with random uncommon characters to avoid banning. Everyone is free to speak as long as they do so **wisely**.
 
 ## Prerequisites
 
@@ -20,11 +20,11 @@ import wisely from 'wisely';
 
 const text = 'Palestine will be free! Freedom is the right of ALL nations!';
 
-// Replace the whole text
+// Obscuring the whole text
 await wisely({ text });
 // Output: P@l3$t|n3 w!ll 83 fr33! Fr33d0m |$ t#3 r!6#t 0f @LL n4t|0n5!
 
-// Only replace the specified phrases
+// Only obscures the specified phrases
 await wisely({ text, phrases: ['palestine', 'free'] });
 // Output: P4l35t1n3 will be fr33! Freedom is the right of ALL nations!
 ```
@@ -33,7 +33,7 @@ await wisely({ text, phrases: ['palestine', 'free'] });
 
 ### wisely(options)
 
-Returns a `Promise` that resolves to a `string` with the replaced text.
+Returns a `Promise` that resolves to a `string` with the obsfucated text.
 
 #### options
 
@@ -44,34 +44,43 @@ Type: `object`
 Type: `string`
 Required: `true`
 
-The text to be replaced.
+The text to be obscured.
 
 ##### phrases
 
 Type: `string[]` \
 Required: `false`
 
-The specific phrases to be replaced. If not specified, the whole text will be replaced.
+The specific phrases to be obscured. If not specified, the whole text will be obscured.
 
 ##### caseSensitive
 
 Type: `boolean` \
 Default: `false`
 
-Whether to replace the phrases in a case-sensitive manner.
+Whether to obscure in a case-sensitive manner.
 
 ##### charSet
 
 Type: `string` \
 Default: `'latin'` \
-Values: `'latin'`
+Values: `'latin'` | `'latin-1'`
 
-The character set to be used for replacing. Currently, only the [Basic Latin](https://unicodeplus.com/block/0000) is supported.
+The character set that will be used for obfuscation.
 
-> In the future, we will add support for more character sets to improve the variety of the replaced text. Also, we will add support to define custom character sets.
+> In the future, we will add support for more character sets to improve the variety of the obsfucated text. Also, we will add support to define custom character sets.
 
 ## Support This Project
 
 Give a ⭐️ if this project helped you!
 
 Also please consider supporting this project by **becoming a sponsor**. Your donation will help us to maintain and develop this project and provide you with better support.
+
+## Character Sets
+
+Below is the built-in character sets available. See the details of each character set in the [charsets](./charsets) directory.
+
+| `charSet` | Block Name | Block Range |
+| ---- | --------- | ----- |
+| `latin` | [Basic Latin](https://unicodeplus.com/block/0000) | \u0000 - \u007f |
+| `latin-1` | [Latin-1 Supplement](https://unicodeplus.com/block/0080) | \u0080 - \u00ff |

@@ -1,10 +1,14 @@
 {
   "name": "wisely",
   "version": "0.1.0",
-  "description": "Replace sensitive phrases with special characters to avoid bans.",
+  "description": "Obfuscating text or phrases with random uncommon characters to avoid banning.",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "charsets/",
+    "dist/"
+  ],
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -21,8 +25,11 @@
   "keywords": [
     "ban",
     "filter",
+    "random",
     "regex",
     "obsfucation",
+    "obfuscate",
+    "obscure",
     "string",
     "text",
     "unicode",
