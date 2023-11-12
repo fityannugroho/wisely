@@ -2,6 +2,9 @@
 
 Obfuscating text or phrases with random uncommon characters to avoid banning. Everyone is free to speak as long as they do so **wisely**.
 
+[![MIT license](https://img.shields.io/github/license/fityannugroho/wisely.svg)](https://github.com/fityannugroho/wisely/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/wisely.svg)](https://www.npmjs.com/package/wisely)
+
 ## Prerequisites
 
 - Node.js 18 or higher
@@ -70,12 +73,6 @@ The character set that will be used for obfuscation.
 
 > In the future, we will add support for more character sets to improve the variety of the obsfucated text. Also, we will add support to define custom character sets.
 
-## Support This Project
-
-Give a ⭐️ if this project helped you!
-
-Also please consider supporting this project by **becoming a sponsor**. Your donation will help us to maintain and develop this project and provide you with better support.
-
 ## Character Sets
 
 Below is the built-in character sets available. See the details of each character set in the [charsets](./charsets) directory.
@@ -84,3 +81,9 @@ Below is the built-in character sets available. See the details of each characte
 | ---- | --------- | ----- |
 | `latin` | [Basic Latin](https://unicodeplus.com/block/0000) | \u0000 - \u007f |
 | `latin-1` | [Latin-1 Supplement](https://unicodeplus.com/block/0080) | \u0080 - \u00ff |
+
+## Support This Project
+
+Give a ⭐️ if this project helped you!
+
+Also please consider supporting this project by **becoming a sponsor**. Your donation will help us to maintain and develop this project and provide you with better support.
