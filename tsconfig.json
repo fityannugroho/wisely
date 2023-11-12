@@ -1,16 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "ES2022",
-    ],
+    "target": "ESNext",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "lib",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "esModuleInterop": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "baseUrl": "./",
@@ -20,7 +16,6 @@
       ],
     },
     "strict": true,
-    "resolveJsonModule": true,
   },
   "exclude": [
     "node_modules",
