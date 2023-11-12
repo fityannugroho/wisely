@@ -1,8 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 export type CharSetNames = 'latin' | 'latin-1';
 export type CharSet = Record<string, string[] | undefined>;
 
-async function getCharSet(name: CharSetNames = 'latin'): Promise<CharSet> {
-  return import(`../charsets/${name}.json`) as Promise<CharSet>;
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+function getCharSet(name: CharSetNames = 'latin'): CharSet {
+  const strJson = fs.readFileSync(
+    path.resolve(dirname, `../charsets/${name}.json`),
+    { encoding: 'utf8' },
+  );
+  return JSON.parse(strJson) as CharSet;
 }
 
 function getChar(char: string, charSet: CharSet, caseSensitive?: boolean) {
@@ -26,8 +36,8 @@ export type Options = {
   charSet?: CharSetNames;
 };
 
-export default async function wisely(options: Options): Promise<string> {
-  const charSet = await getCharSet(options.charSet);
+export default function wisely(options: Options): string {
+  const charSet = getCharSet(options.charSet);
 
   const censor = (phrase: string): string => phrase.split('')
     .map((char) => getChar(char, charSet, options.caseSensitive))

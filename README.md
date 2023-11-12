@@ -24,19 +24,21 @@ import wisely from 'wisely';
 const text = 'Palestine will be free! Freedom is the right of ALL nations!';
 
 // Obscuring the whole text
-await wisely({ text });
-// Output: P@l3$t|n3 w!ll 83 fr33! Fr33d0m |$ t#3 r!6#t 0f @LL n4t|0n5!
+const res1 = wisely({ text });
 
 // Only obscures the specified phrases
-await wisely({ text, phrases: ['palestine', 'free'] });
-// Output: P4l35t1n3 will be fr33! Freedom is the right of ALL nations!
+const res2 = wisely({ text, phrases: ['palestine', 'free'] });
+
+console.log(res1, res2);
+// P@l3$t|n3 w!ll 83 fr33! Fr33d0m |$ t#3 r!6#t 0f @LL n4t|0n5!
+// P4l35t1n3 will be fr33! Freedom is the right of ALL nations!
 ```
 
 ## API
 
 ### wisely(options)
 
-Returns a `Promise` that resolves to a `string` with the obsfucated text.
+Returns a `string` with the obsfucated text.
 
 #### options
 
