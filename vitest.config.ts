@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     root: './',
     alias: {
-      '~': path.resolve(__dirname, './src'),
+      '~': path.resolve('./src'),
     },
     coverage: {
       provider: 'v8',
