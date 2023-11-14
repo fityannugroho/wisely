@@ -25,6 +25,11 @@ function getCharSet(name: CharSetNames = 'latin'): CharSet {
   return JSON.parse(strJson) as CharSet;
 }
 
+export function isCharSetValid(charSet: CharSet): boolean {
+  return !Object.keys(charSet).some((char) => char.length !== 1)
+    && !Object.values(charSet).some((replacements) => replacements?.some((replacement) => replacement.length !== 1));
+}
+
 export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet {
   const res: CharSet = {};
 
@@ -32,10 +37,7 @@ export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet 
     const charSetObj = typeof charSet === 'string' ? getCharSet(charSet) : charSet;
 
     // Validate the charSet
-    if (
-      Object.keys(charSetObj).some((char) => char.length !== 1)
-      || Object.values(charSetObj).some((replacements) => replacements?.some((replacement) => replacement.length !== 1))
-    ) {
+    if (!isCharSetValid(charSetObj)) {
       throw new Error('Invalid charSet: each key and value must be a single character');
     }
 
