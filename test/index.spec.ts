@@ -2,6 +2,85 @@
 import { describe, expect, test } from 'vitest';
 import wisely, { Options, mergeCharSets } from '~/index.js';
 
+describe('mergeCharSets', () => {
+  test('merge two built-in charSets', () => {
+    const mergedCharSet = mergeCharSets('latin', 'latin-1');
+
+    expect(mergedCharSet).toEqual(
+      expect.objectContaining({
+        A: ['4', '\u00c0', '\u00c1', '\u00c2', '\u00c3', '\u00c4', '\u00c5'],
+        a: ['@', '\u00aa', '\u00e0', '\u00e1', '\u00e2', '\u00e3', '\u00e4', '\u00e5'],
+      }),
+    );
+  });
+
+  test('merge built-in charSets with custom charSets', () => {
+    const customCharSet = { a: ['b', 'c'], x: ['y', 'z'] };
+
+    expect(mergeCharSets('latin', customCharSet)).toEqual(
+      expect.objectContaining({
+        A: ['4'],
+        a: ['@', 'b', 'c'],
+        x: ['y', 'z'],
+        Z: ['2'],
+      }),
+    );
+  });
+
+  test('merge two custom charSets', () => {
+    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
+    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
+
+    expect(mergeCharSets(charSet1, charSet2)).toEqual({
+      a: ['b', 'c', 'd', 'e'],
+      x: ['y', 'z'],
+      X: ['Y', 'Z'],
+    });
+  });
+
+  test('charSet order should not affect the result', () => {
+    const customCharSet = { a: ['4', '@'] };
+
+    expect(mergeCharSets('latin', 'latin-1')).toEqual(mergeCharSets('latin-1', 'latin'));
+    expect(mergeCharSets('latin', customCharSet)).toEqual(mergeCharSets(customCharSet, 'latin'));
+  });
+
+  test('merge three custom charSets', () => {
+    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
+    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
+    const charSet3 = { a: ['e', 'f', 'g'], A: ['B', 'C'] };
+
+    expect(mergeCharSets(charSet1, charSet2, charSet3)).toEqual({
+      a: ['b', 'c', 'd', 'e', 'f', 'g'],
+      A: ['B', 'C'],
+      x: ['y', 'z'],
+      X: ['Y', 'Z'],
+    });
+  });
+
+  test('duplicate built-in charSets names', () => {
+    expect(mergeCharSets('latin', 'latin')).toEqual(
+      expect.objectContaining({
+        A: ['4'], a: ['@'], B: ['8'], b: ['6'], Z: ['2'],
+      }),
+    );
+  });
+
+  test('unknown charSets names', () => {
+    // @ts-expect-error
+    expect(() => mergeCharSets('')).toThrow();
+    // @ts-expect-error
+    expect(() => mergeCharSets('x')).toThrow();
+  });
+
+  test('invalid custom charSets', () => {
+    expect(() => mergeCharSets({ aa: ['b', 'c', 'd'] })).toThrow();
+    expect(() => mergeCharSets({ a: ['bc'] })).toThrow();
+    expect(() => mergeCharSets({ a: ['b', 'c', ''] })).toThrow();
+    expect(() => mergeCharSets({ a: ['b', 'c', 'd', ''] })).toThrow();
+  });
+});
+
 describe('wisely', () => {
   const text = 'Palestine will be free! Freedom is the right of ALL nations!';
 
@@ -89,66 +168,5 @@ describe('wisely', () => {
     });
 
     expect(result).toHaveLength(testText.length);
-  });
-});
-
-describe('mergeCharSets', () => {
-  test('merge two charSets', () => {
-    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
-    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
-
-    expect(mergeCharSets(charSet1, charSet2)).toEqual({
-      a: ['b', 'c', 'd', 'e'],
-      x: ['y', 'z'],
-      X: ['Y', 'Z'],
-    });
-  });
-
-  test('merge three charSets', () => {
-    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
-    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
-    const charSet3 = { a: ['e', 'f', 'g'], A: ['B', 'C'] };
-
-    expect(mergeCharSets(charSet1, charSet2, charSet3)).toEqual({
-      a: ['b', 'c', 'd', 'e', 'f', 'g'],
-      A: ['B', 'C'],
-      x: ['y', 'z'],
-      X: ['Y', 'Z'],
-    });
-  });
-
-  test('merge charSet with charSetNames', () => {
-    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
-
-    expect(mergeCharSets(charSet1, 'latin')).toEqual(
-      expect.objectContaining({
-        A: ['4'],
-        a: ['b', 'c', '@'],
-        x: ['y', 'z'],
-        Z: ['2'],
-      }),
-    );
-  });
-
-  test('duplicate charSetNames', () => {
-    expect(mergeCharSets('latin', 'latin')).toEqual(
-      expect.objectContaining({
-        A: ['4'], a: ['@'], B: ['8'], b: ['6'], Z: ['2'],
-      }),
-    );
-  });
-
-  test('Unknown charSetNames', () => {
-    // @ts-expect-error
-    expect(() => mergeCharSets('')).toThrow();
-    // @ts-expect-error
-    expect(() => mergeCharSets('x')).toThrow();
-  });
-
-  test('Invalid custom charSet', () => {
-    expect(() => mergeCharSets({ aa: ['b', 'c', 'd'] })).toThrow();
-    expect(() => mergeCharSets({ a: ['bc'] })).toThrow();
-    expect(() => mergeCharSets({ a: ['b', 'c', ''] })).toThrow();
-    expect(() => mergeCharSets({ a: ['b', 'c', 'd', ''] })).toThrow();
   });
 });

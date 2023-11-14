@@ -21,6 +21,7 @@ function getCharSet(name: CharSetNames = 'latin'): CharSet {
     path.resolve(dirname, `../charsets/${name}.json`),
     { encoding: 'utf8' },
   );
+
   return JSON.parse(strJson) as CharSet;
 }
 
@@ -42,7 +43,7 @@ export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet 
       res[char] = Array.from(new Set([
         ...(res[char] ?? []),
         ...(replacements ?? []),
-      ]));
+      ])).sort();
     }
   }
 
