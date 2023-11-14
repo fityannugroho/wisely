@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, expect, test } from 'vitest';
-import wisely from '~/index.js';
+import wisely, { Options, mergeCharSets } from '~/index.js';
 
 describe('wisely', () => {
   const text = 'Palestine will be free! Freedom is the right of ALL nations!';
@@ -55,10 +56,29 @@ describe('wisely', () => {
     expect(wisely({ text, phrases: [] })).toEqual(text);
   });
 
-  test.each([
-    { testText: 'AaBbCcDdXxZz', contains: '\u00df\u00d7Zz', notContains: 'AaBbCcDdXx' },
-  ])('with specific charSet (latin-1): $testText', ({ testText, contains, notContains }) => {
-    const result = wisely({ text: testText, charSet: 'latin-1' });
+  test.each<{ testText: string, charSets: Options['charSets'], contains: string, notContains: string }>([
+    {
+      charSets: ['latin-1'],
+      testText: 'AaBbCcDdXxZz',
+      contains: '\u00df\u00d7Zz',
+      notContains: 'AaBbCcDdXx',
+    },
+    {
+      charSets: ['latin', 'latin-1'],
+      testText: 'AaBbCcDdXxZz',
+      contains: '\u00d72',
+      notContains: 'AaBbCcDdXxZz',
+    },
+    {
+      charSets: [{ a: ['b', 'c'], x: ['y', 'z'] }],
+      testText: 'AaBbCcDdXxZz',
+      contains: 'BbCcDdZz',
+      notContains: 'AaXx',
+    },
+  ])('with specific charSet $charSets: $testText', ({
+    testText, charSets, contains, notContains,
+  }) => {
+    const result = wisely({ text: testText, charSets });
 
     contains.split('').forEach((char) => {
       expect(result).contain(char);
@@ -69,5 +89,66 @@ describe('wisely', () => {
     });
 
     expect(result).toHaveLength(testText.length);
+  });
+});
+
+describe('mergeCharSets', () => {
+  test('merge two charSets', () => {
+    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
+    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
+
+    expect(mergeCharSets(charSet1, charSet2)).toEqual({
+      a: ['b', 'c', 'd', 'e'],
+      x: ['y', 'z'],
+      X: ['Y', 'Z'],
+    });
+  });
+
+  test('merge three charSets', () => {
+    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
+    const charSet2 = { a: ['c', 'd', 'e'], X: ['Y', 'Z'] };
+    const charSet3 = { a: ['e', 'f', 'g'], A: ['B', 'C'] };
+
+    expect(mergeCharSets(charSet1, charSet2, charSet3)).toEqual({
+      a: ['b', 'c', 'd', 'e', 'f', 'g'],
+      A: ['B', 'C'],
+      x: ['y', 'z'],
+      X: ['Y', 'Z'],
+    });
+  });
+
+  test('merge charSet with charSetNames', () => {
+    const charSet1 = { a: ['b', 'c'], x: ['y', 'z'] };
+
+    expect(mergeCharSets(charSet1, 'latin')).toEqual(
+      expect.objectContaining({
+        A: ['4'],
+        a: ['b', 'c', '@'],
+        x: ['y', 'z'],
+        Z: ['2'],
+      }),
+    );
+  });
+
+  test('duplicate charSetNames', () => {
+    expect(mergeCharSets('latin', 'latin')).toEqual(
+      expect.objectContaining({
+        A: ['4'], a: ['@'], B: ['8'], b: ['6'], Z: ['2'],
+      }),
+    );
+  });
+
+  test('Unknown charSetNames', () => {
+    // @ts-expect-error
+    expect(() => mergeCharSets('')).toThrow();
+    // @ts-expect-error
+    expect(() => mergeCharSets('x')).toThrow();
+  });
+
+  test('Invalid custom charSet', () => {
+    expect(() => mergeCharSets({ aa: ['b', 'c', 'd'] })).toThrow();
+    expect(() => mergeCharSets({ a: ['bc'] })).toThrow();
+    expect(() => mergeCharSets({ a: ['b', 'c', ''] })).toThrow();
+    expect(() => mergeCharSets({ a: ['b', 'c', 'd', ''] })).toThrow();
   });
 });
