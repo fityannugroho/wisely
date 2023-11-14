@@ -72,7 +72,7 @@ Whether to obscure in a case-sensitive manner.
 
 The character set that will be used for obfuscation. Put the **name of the** [**built-in character sets**](#character-sets) or a **custom character set objects**.
 
-The custom character set object must be an object that **each key is a single character** and **each value is an array of single characters** that will be used to replace the key. See the example below.
+The valid custom character set object must be an object that **each key is a single character** and **each value is an array of single characters** that will be used to replace the key. See the example below.
 
 ```js
 const customCharSet = {
@@ -84,6 +84,16 @@ const customCharSet = {
   t: ['7'],
 };
 ```
+
+### `isCharSetValid(charSet)`
+
+Returns a `boolean` whether the character set is valid.
+
+#### charSet
+
+Type: `object`
+
+The character set that will be checked.
 
 ### `mergeCharSets(...charSets)`
 

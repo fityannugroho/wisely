@@ -26,8 +26,12 @@ function getCharSet(name: CharSetNames = 'latin'): CharSet {
 }
 
 export function isCharSetValid(charSet: CharSet): boolean {
-  return !Object.keys(charSet).some((char) => char.length !== 1)
-    && !Object.values(charSet).some((replacements) => replacements?.some((replacement) => replacement.length !== 1));
+  return typeof charSet === 'object'
+    && Object.keys(charSet).every((key) => key.length === 1)
+    && Object.values(charSet).every((replacements) => (
+      Array.isArray(replacements)
+      && replacements.every((char) => char.length === 1)
+    ));
 }
 
 export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet {
@@ -41,9 +45,9 @@ export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet 
       throw new Error('Invalid charSet: each key and value must be a single character');
     }
 
-    for (const [char, replacements] of Object.entries(charSetObj)) {
-      res[char] = Array.from(new Set([
-        ...(res[char] ?? []),
+    for (const [key, replacements] of Object.entries(charSetObj)) {
+      res[key] = Array.from(new Set([
+        ...(res[key] ?? []),
         ...(replacements ?? []),
       ])).sort();
     }
