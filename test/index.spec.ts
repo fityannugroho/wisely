@@ -74,10 +74,16 @@ describe('mergeCharSets', () => {
   });
 
   test('invalid custom charSets', () => {
-    expect(() => mergeCharSets({ aa: ['b', 'c', 'd'] })).toThrow();
+    expect(() => mergeCharSets({ aa: ['b'] })).toThrow();
     expect(() => mergeCharSets({ a: ['bc'] })).toThrow();
-    expect(() => mergeCharSets({ a: ['b', 'c', ''] })).toThrow();
-    expect(() => mergeCharSets({ a: ['b', 'c', 'd', ''] })).toThrow();
+    expect(() => mergeCharSets({ a: [''] })).toThrow();
+    expect(() => mergeCharSets({ a: ['b', ''] })).toThrow();
+    expect(() => mergeCharSets({ 1: ['a'] })).toThrow();
+    expect(() => mergeCharSets({ '!': ['a'] })).toThrow();
+    // Not contains control characters
+    expect(() => mergeCharSets({
+      a: ['\u0000', '\u0001', '\u001f', '\u007f', '\u0080', '\u009f'],
+    })).toThrow();
   });
 });
 
@@ -132,7 +138,7 @@ describe('wisely', () => {
   });
 
   test('empty phrases', () => {
-    expect(wisely({ text, phrases: [] })).toEqual(text);
+    expect(wisely({ text, phrases: [] })).not.toEqual(text);
   });
 
   test.each<{ testText: string, charSets: Options['charSets'], contains: string, notContains: string }>([

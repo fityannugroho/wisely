@@ -2,19 +2,35 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+/**
+ * The name of built-in charsets.
+ */
 export const CharSets = {
   LATIN: 'latin',
   LATIN_1: 'latin-1',
 } as const;
+
 export type CharSetNames = typeof CharSets[keyof typeof CharSets];
 export type CharSet = Record<string, string[] | undefined>;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+/**
+ * Get a built-in charset.
+ * @param name The name of the charset.
+ * @throws {ValidationError} If the given charset name is invalid.
+ */
 function getCharSet(name: CharSetNames = 'latin'): CharSet {
   // Validating the name
   if (!Object.values(CharSets).includes(name)) {
-    throw new Error(`Invalid charSet name: ${name}`);
+    throw new ValidationError(`Invalid charSet name: ${name}`);
   }
 
   const strJson = fs.readFileSync(
@@ -25,15 +41,33 @@ function getCharSet(name: CharSetNames = 'latin'): CharSet {
   return JSON.parse(strJson) as CharSet;
 }
 
-export function isCharSetValid(charSet: CharSet): boolean {
+/**
+ * Check if the given charset is valid.
+ * @param charSet The charset to check.
+ */
+export function isCharSetValid(charSet: object): boolean {
   return typeof charSet === 'object'
-    && Object.keys(charSet).every((key) => key.length === 1)
+    && Object.keys(charSet).every((key) => (
+      key.length === 1
+      && /^[a-zA-Z]$/.test(key)
+    ))
     && Object.values(charSet).every((replacements) => (
-      Array.isArray(replacements)
-      && replacements.every((char) => char.length === 1)
+      Array.isArray(replacements) && replacements.every((char) => (
+        typeof char === 'string'
+        && char.length === 1
+        // eslint-disable-next-line no-control-regex
+        && /[^\u0000-\u001f\u007f-\u009f]/.test(char)
+      ))
     ));
 }
 
+/**
+ * Merge multiple charsets.
+ * @param charSets The names of built-in charset or custom charsets to merge.
+ * @returns The merged charset.
+ * @throws {ValidationError} If the given built-in charset name is invalid
+ * or if the given custom charset is invalid.
+ */
 export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet {
   const res: CharSet = {};
 
@@ -42,7 +76,7 @@ export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet 
 
     // Validate the charSet
     if (!isCharSetValid(charSetObj)) {
-      throw new Error('Invalid charSet: each key and value must be a single character');
+      throw new ValidationError('Invalid charSet: each key and value must be a single character');
     }
 
     for (const [key, replacements] of Object.entries(charSetObj)) {
@@ -56,6 +90,13 @@ export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet 
   return res;
 }
 
+/**
+ * Get a random replacement for the given character.
+ * @param char The character to replace.
+ * @param charSet The charset to use.
+ * @param caseSensitive Whether to use case sensitive replacements.
+ * @returns The replacement character.
+ */
 function getChar(char: string, charSet: CharSet, caseSensitive?: boolean) {
   const replacements = caseSensitive ? charSet[char] ?? []
     : Array.from(new Set([
@@ -77,6 +118,11 @@ export type Options = {
   charSets?: (CharSetNames | CharSet)[];
 };
 
+/**
+ * @param options The options.
+ * @throws {ValidationError} If the given built-in charset name is invalid
+ * or if the given custom charset is invalid.
+ */
 export default function wisely(options: Options): string {
   const charSet = mergeCharSets(...(options.charSets ?? ['latin']));
 
@@ -84,7 +130,7 @@ export default function wisely(options: Options): string {
     .map((char) => getChar(char, charSet, options.caseSensitive))
     .join('');
 
-  if (!options.phrases) {
+  if (!options.phrases?.length) {
     return censor(options.text);
   }
 

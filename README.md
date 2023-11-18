@@ -76,7 +76,7 @@ The text to be obscured.
 - Type: `string[]`
 - Required: `false`
 
-The specific phrases to be obscured. If not specified, the whole text will be obscured.
+The specific phrases to be obscured. If not specified or empty, the entire text will be obscured.
 
 ##### caseSensitive
 
@@ -92,7 +92,12 @@ Whether to obscure in a case-sensitive manner.
 
 The character set that will be used for obfuscation. Put the **name of the** [**built-in character sets**](#character-sets) or a **custom character set objects**.
 
-The valid custom character set object must be an object that **each key is a single character** and **each value is an array of single characters** that will be used to replace the key. See the example below.
+The valid custom character set must be an object that contains key-value pairs where:
+
+- The **key** is the character to be replaced. It must be a **single alphabet character** (`a-z`, `A-Z`).
+- The **value** is an array of characters that will be used to replace the key. It must be an array of **any single characters** other than [control characters](https://unicodeplus.com/category/Cc).
+
+See the example below.
 
 ```js
 const customCharSet = {
