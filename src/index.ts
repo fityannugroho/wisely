@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import coreWisely, {
   CharSet,
+  CharSets,
   Options as CoreOptions,
   ValidationError,
   mergeCharSets as coreMergeCharSets,
@@ -10,15 +11,7 @@ import coreWisely, {
   isPhraseValid,
 } from './core.js';
 
-/**
- * The name of built-in charsets.
- */
-export const CharSets = {
-  LATIN: 'latin',
-  LATIN_1: 'latin-1',
-} as const;
-
-export type CharSetNames = typeof CharSets[keyof typeof CharSets];
+type CharSetNames = typeof CharSets[keyof typeof CharSets];
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -75,5 +68,5 @@ export default function wisely(options: Options): string {
 
 // Export from core
 export {
-  CharSet, ValidationError, isCharSetValid, isPhraseValid,
+  CharSet, CharSets, ValidationError, isCharSetValid, isPhraseValid,
 };

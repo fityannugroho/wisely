@@ -1,5 +1,13 @@
 export type CharSet = Record<string, string[] | undefined>;
 
+/**
+ * The list of built-in charset names.
+ */
+export const CharSets = {
+  LATIN: 'latin',
+  LATIN_1: 'latin-1',
+} as const;
+
 export class ValidationError extends Error {
   constructor(message: string) {
     super(message);
