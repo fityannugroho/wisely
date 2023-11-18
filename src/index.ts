@@ -62,6 +62,16 @@ export function isCharSetValid(charSet: object): boolean {
 }
 
 /**
+ * Check if the given phrase is valid.
+ * @param phrase The phrase to check.
+ */
+export function isPhraseValid(phrase: string): boolean {
+  return typeof phrase === 'string'
+    && /^[a-zA-Z0-9 \-_'/]+$/.test(phrase)
+    && phrase.trim().length > 0 && phrase.length <= 30;
+}
+
+/**
  * Merge multiple charsets.
  * @param charSets The names of built-in charset or custom charsets to merge.
  * @returns The merged charset.
@@ -120,8 +130,8 @@ export type Options = {
 
 /**
  * @param options The options.
- * @throws {ValidationError} If the given built-in charset name is invalid
- * or if the given custom charset is invalid.
+ * @throws {ValidationError} If the given built-in charset name,
+ * the given custom charset, or if the given phrases are invalid.
  */
 export default function wisely(options: Options): string {
   const charSet = mergeCharSets(...(options.charSets ?? ['latin']));
@@ -135,8 +145,13 @@ export default function wisely(options: Options): string {
   }
 
   let res = options.text;
-  for (const t of options.phrases) {
-    const regex = new RegExp(`\\b${t}\\b`, options.caseSensitive ? 'g' : 'gi');
+  for (const phrase of options.phrases) {
+    // Validating the phrase
+    if (!isPhraseValid(phrase)) {
+      throw new ValidationError(`Invalid phrase: ${phrase}`);
+    }
+
+    const regex = new RegExp(`\\b${phrase.trim()}\\b`, options.caseSensitive ? 'g' : 'gi');
 
     for (const m of options.text.matchAll(regex)) {
       const [match] = m;

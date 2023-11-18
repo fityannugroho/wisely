@@ -141,6 +141,19 @@ describe('wisely', () => {
     expect(wisely({ text, phrases: [] })).not.toEqual(text);
   });
 
+  test('with invalid phrases', () => {
+    expect(() => wisely({ text, phrases: [''] })).toThrow();
+    expect(() => wisely({ text, phrases: [' '] })).toThrow();
+    expect(() => wisely({ text, phrases: [' '.repeat(10)] })).toThrow();
+    expect(() => wisely({ text, phrases: ['\n'] })).toThrow();
+    expect(() => wisely({ text, phrases: ['a\n'] })).toThrow();
+    expect(() => wisely({ text, phrases: ['\t'] })).toThrow();
+    expect(() => wisely({ text, phrases: ['a\t'] })).toThrow();
+    expect(() => wisely({ text, phrases: ['a'.repeat(31)] })).toThrow();
+    expect(() => wisely({ text, phrases: ['th!s symbo|'] })).toThrow();
+    expect(() => wisely({ text, phrases: ['\\'] })).toThrow();
+  });
+
   test.each<{ testText: string, charSets: Options['charSets'], contains: string, notContains: string }>([
     {
       charSets: ['latin-1'],

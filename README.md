@@ -78,6 +78,16 @@ The text to be obscured.
 
 The specific phrases to be obscured. If not specified or empty, the entire text will be obscured.
 
+Each phrase must be **less than or equal to 30 characters** and only contain the following characters:
+
+- Alphabets (`a-z`, `A-Z`)
+- Numbers (`0-9`)
+- Spaces (` `)
+- Hyphens (`-`)
+- Underscores (`_`)
+- Apostrophes (`'`)
+- Forward slashes (`/`)
+
 ##### caseSensitive
 
 - Type: `boolean`
