@@ -1,22 +1,19 @@
 {
   "name": "wisely",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Obfuscating text or phrases with random uncommon characters to avoid banning.",
   "type": "module",
-  "main": "dist/index.js",
   "files": [
     "charsets/",
     "dist/"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./core": {
-      "types": "./dist/core.d.ts",
+      "node": "./dist/index.js",
       "default": "./dist/core.js"
-    }
+    },
+    "./core": "./dist/core.js",
+    "./charsets/*": "./charsets/*"
   },
   "scripts": {
     "lint": "eslint .",
