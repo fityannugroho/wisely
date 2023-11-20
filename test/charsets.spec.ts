@@ -1,12 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { CharSet, isCharSetValid } from '~/index.js';
+import { CharSet, CharSets, isCharSetValid } from '~/index.js';
 
-test.each([
-  { name: 'latin' },
-  { name: 'latin-1' },
-])('validate charSet: $name', ({ name }) => {
+const charSetsNames = Object.values(CharSets);
+
+test.each(charSetsNames.map((name) => ({ name })))('validate charSet: $name', ({ name }) => {
   const strJson = fs.readFileSync(
     path.resolve(__dirname, `../charsets/${name}.json`),
     { encoding: 'utf8' },

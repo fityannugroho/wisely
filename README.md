@@ -105,7 +105,7 @@ The character set that will be used for obfuscation. Put the **name of the** [**
 The valid custom character set must be an object that contains key-value pairs where:
 
 - The **key** is the character to be replaced. It must be a **single alphabet character** (`a-z`, `A-Z`).
-- The **value** is an array of characters that will be used to replace the key. It must be an array of **any single characters** other than [control characters](https://unicodeplus.com/category/Cc).
+- The **value** is an array of characters that will be used to replace the key. It must be an array of **any single characters** other than [control characters](https://unicodeplus.com/category/Cc) and [private use area block](https://unicodeplus.com/block/E000).
 
 See the example below.
 
@@ -148,6 +148,8 @@ Below is the built-in character sets available. See the details of each characte
 | --- | --- | --- |
 | `latin` | [Basic Latin](https://unicodeplus.com/block/0000) | \u0000 - \u007f |
 | `latin-1` | [Latin-1 Supplement](https://unicodeplus.com/block/0080) | \u0080 - \u00ff |
+| `latin-ext-a` | [Latin Extended-A](https://unicodeplus.com/block/0100) | \u0100 - \u017f |
+| `latin-ext-b` | [Latin Extended-B](https://unicodeplus.com/block/0180) | \u0180 - \u024f |
 
 ## Support This Project
 

@@ -6,6 +6,8 @@ export type CharSet = Record<string, string[] | undefined>;
 export const CharSets = {
   LATIN: 'latin',
   LATIN_1: 'latin-1',
+  LATIN_EXT_A: 'latin-ext-a',
+  LATIN_EXT_B: 'latin-ext-b',
 } as const;
 
 export class ValidationError extends Error {
@@ -31,6 +33,8 @@ export function isCharSetValid(charSet: object): boolean {
         && char.length === 1
         // eslint-disable-next-line no-control-regex
         && /[^\u0000-\u001f\u007f-\u009f]/.test(char)
+        // no private use characters
+        && /[^\ue000-\uf8ff]$/.test(char)
       ))
     ));
 }

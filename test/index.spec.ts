@@ -84,6 +84,8 @@ describe('mergeCharSets', () => {
     expect(() => mergeCharSets({
       a: ['\u0000', '\u0001', '\u001f', '\u007f', '\u0080', '\u009f'],
     })).toThrow();
+    // Not contains private use characters
+    expect(() => mergeCharSets({ a: ['\ue000', '\ue001', '\uf8ff'] })).toThrow();
   });
 });
 
