@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, expect, test } from 'vitest';
-import wisely, { Options, mergeCharSets } from '~/index.js';
+import wisely, { mergeCharSets, type Options } from '~/index.js';
 
 describe('mergeCharSets', () => {
   test('merge two built-in charSets', () => {
@@ -61,7 +60,11 @@ describe('mergeCharSets', () => {
   test('duplicate built-in charSets names', () => {
     expect(mergeCharSets('latin', 'latin')).toEqual(
       expect.objectContaining({
-        A: ['4'], a: ['@'], B: ['8'], b: ['6'], Z: ['2'],
+        A: ['4'],
+        a: ['@'],
+        B: ['8'],
+        b: ['6'],
+        Z: ['2'],
       }),
     );
   });
@@ -81,9 +84,11 @@ describe('mergeCharSets', () => {
     expect(() => mergeCharSets({ 1: ['a'] })).toThrow();
     expect(() => mergeCharSets({ '!': ['a'] })).toThrow();
     // Not contains control characters
-    expect(() => mergeCharSets({
-      a: ['\u0000', '\u0001', '\u001f', '\u007f', '\u0080', '\u009f'],
-    })).toThrow();
+    expect(() =>
+      mergeCharSets({
+        a: ['\u0000', '\u0001', '\u001f', '\u007f', '\u0080', '\u009f'],
+      }),
+    ).toThrow();
     // Not contains private use characters
     expect(() => mergeCharSets({ a: ['\ue000', '\ue001', '\uf8ff'] })).toThrow();
   });
@@ -104,9 +109,7 @@ describe('wisely', () => {
   test.each([
     { phrase: 'palestine', unaffected: 'will be' },
     { phrase: 'free', unaffected: 'Freedom' },
-  ])('with specific phrases provided: $phrase', ({
-    phrase, unaffected,
-  }) => {
+  ])('with specific phrases provided: $phrase', ({ phrase, unaffected }) => {
     const result = wisely({ text, phrases: [phrase] });
 
     expect(result).contain(unaffected);
@@ -156,7 +159,7 @@ describe('wisely', () => {
     expect(() => wisely({ text, phrases: ['\\'] })).toThrow();
   });
 
-  test.each<{ testText: string, charSets: Options['charSets'], contains: string, notContains: string }>([
+  test.each<{ testText: string; charSets: Options['charSets']; contains: string; notContains: string }>([
     {
       charSets: ['latin-1'],
       testText: 'AaBbCcDdXxZz',
@@ -175,9 +178,7 @@ describe('wisely', () => {
       contains: 'BbCcDdZz',
       notContains: 'AaXx',
     },
-  ])('with specific charSet $charSets: $testText', ({
-    testText, charSets, contains, notContains,
-  }) => {
+  ])('with specific charSet $charSets: $testText', ({ testText, charSets, contains, notContains }) => {
     const result = wisely({ text: testText, charSets });
 
     contains.split('').forEach((char) => {

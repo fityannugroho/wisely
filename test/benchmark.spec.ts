@@ -1,6 +1,6 @@
-import { expect, test } from 'vitest';
-import { performance } from 'perf_hooks';
 import fs from 'node:fs';
+import { performance } from 'node:perf_hooks';
+import { expect, test } from 'vitest';
 import wisely from '~/index.js';
 
 test('large text', () => {

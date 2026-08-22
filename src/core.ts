@@ -22,21 +22,21 @@ export class ValidationError extends Error {
  * @param charSet The charset to check.
  */
 export function isCharSetValid(charSet: object): boolean {
-  return typeof charSet === 'object'
-    && Object.keys(charSet).every((key) => (
-      key.length === 1
-      && /^[a-zA-Z]$/.test(key)
-    ))
-    && Object.values(charSet).every((replacements) => (
-      Array.isArray(replacements) && replacements.every((char) => (
-        typeof char === 'string'
-        && char.length === 1
-        // eslint-disable-next-line no-control-regex
-        && /[^\u0000-\u001f\u007f-\u009f]/.test(char)
-        // no private use characters
-        && /[^\ue000-\uf8ff]$/.test(char)
-      ))
-    ));
+  return (
+    typeof charSet === 'object'
+    && Object.keys(charSet).every((key) => key.length === 1 && /^[a-zA-Z]$/.test(key))
+    && Object.values(charSet).every(
+      (replacements) =>
+        Array.isArray(replacements)
+        && replacements.every(
+          (char) =>
+            typeof char === 'string'
+            && char.length === 1 // biome-ignore lint/suspicious/noControlCharactersInRegex: control characters are intentionally rejected
+            && /[^\u0000-\u001f\u007f-\u009f]/.test(char) // no private use characters
+            && /[^\ue000-\uf8ff]$/.test(char),
+        ),
+    )
+  );
 }
 
 /**
@@ -55,10 +55,7 @@ export function mergeCharSets(...charSets: CharSet[]): CharSet {
     }
 
     for (const [key, replacements] of Object.entries(charSet)) {
-      res[key] = Array.from(new Set([
-        ...(res[key] ?? []),
-        ...(replacements ?? []),
-      ])).sort();
+      res[key] = Array.from(new Set([...(res[key] ?? []), ...(replacements ?? [])])).sort();
     }
   }
 
@@ -70,9 +67,9 @@ export function mergeCharSets(...charSets: CharSet[]): CharSet {
  * @param phrase The phrase to check.
  */
 export function isPhraseValid(phrase: string): boolean {
-  return typeof phrase === 'string'
-    && /^[a-zA-Z0-9 \-_'/]+$/.test(phrase)
-    && phrase.trim().length > 0 && phrase.length <= 30;
+  return (
+    typeof phrase === 'string' && /^[a-zA-Z0-9 \-_'/]+$/.test(phrase) && phrase.trim().length > 0 && phrase.length <= 30
+  );
 }
 
 /**
@@ -83,11 +80,9 @@ export function isPhraseValid(phrase: string): boolean {
  * @returns The replacement character.
  */
 function getChar(char: string, charSet: CharSet, caseSensitive?: boolean) {
-  const replacements = caseSensitive ? charSet[char] ?? []
-    : Array.from(new Set([
-      ...(charSet[char.toUpperCase()] ?? []),
-      ...(charSet[char.toLowerCase()] ?? []),
-    ]));
+  const replacements = caseSensitive
+    ? (charSet[char] ?? [])
+    : Array.from(new Set([...(charSet[char.toUpperCase()] ?? []), ...(charSet[char.toLowerCase()] ?? [])]));
 
   if (!replacements.length) {
     return char;
@@ -110,9 +105,11 @@ export type Options = {
 export default function wisely(options: Options): string {
   const charSet = mergeCharSets(...(options.charSets ?? []));
 
-  const censor = (phrase: string): string => phrase.split('')
-    .map((char) => getChar(char, charSet, options.caseSensitive))
-    .join('');
+  const censor = (phrase: string): string =>
+    phrase
+      .split('')
+      .map((char) => getChar(char, charSet, options.caseSensitive))
+      .join('');
 
   if (!options.phrases?.length) {
     return censor(options.text);
@@ -129,8 +126,7 @@ export default function wisely(options: Options): string {
     for (const m of options.text.matchAll(regex)) {
       const [match] = m;
       // Replace only for current match by the index
-      res = res.slice(0, m.index) + censor(match)
-        + res.slice(m.index + match.length);
+      res = res.slice(0, m.index) + censor(match) + res.slice(m.index + match.length);
     }
   }
 

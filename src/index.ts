@@ -4,14 +4,14 @@ import { fileURLToPath } from 'node:url';
 import coreWisely, {
   type CharSet,
   CharSets,
-  Options as CoreOptions,
-  ValidationError,
+  type Options as CoreOptions,
   mergeCharSets as coreMergeCharSets,
   isCharSetValid,
   isPhraseValid,
+  ValidationError,
 } from './core.js';
 
-type CharSetNames = typeof CharSets[keyof typeof CharSets];
+type CharSetNames = (typeof CharSets)[keyof typeof CharSets];
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,10 +25,7 @@ export function getCharSet(name: CharSetNames = 'latin'): CharSet {
     throw new ValidationError(`Invalid charSet name: ${name}`);
   }
 
-  const strJson = fs.readFileSync(
-    path.resolve(dirname, `../charsets/${name}.json`),
-    { encoding: 'utf8' },
-  );
+  const strJson = fs.readFileSync(path.resolve(dirname, `../charsets/${name}.json`), { encoding: 'utf8' });
 
   return JSON.parse(strJson) as CharSet;
 }
@@ -40,9 +37,7 @@ export function getCharSet(name: CharSetNames = 'latin'): CharSet {
  * @throws {ValidationError} If either the given built-in charset name or custom charset are invalid.
  */
 export function mergeCharSets(...charSets: (CharSetNames | CharSet)[]): CharSet {
-  return coreMergeCharSets(...charSets.map((charSet) => (
-    typeof charSet === 'string' ? getCharSet(charSet) : charSet
-  )));
+  return coreMergeCharSets(...charSets.map((charSet) => (typeof charSet === 'string' ? getCharSet(charSet) : charSet)));
 }
 
 export type Options = Omit<CoreOptions, 'charSets'> & {
@@ -66,8 +61,6 @@ export default function wisely(options: Options): string {
   });
 }
 
-// Export from core
-export {
-  CharSets, ValidationError, isCharSetValid, isPhraseValid,
-};
 export type { CharSet };
+// Export from core
+export { CharSets, isCharSetValid, isPhraseValid, ValidationError };
