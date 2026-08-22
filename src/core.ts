@@ -130,7 +130,7 @@ export default function wisely(options: Options): string {
       const [match] = m;
       // Replace only for current match by the index
       res = res.slice(0, m.index) + censor(match)
-        + (m.index === undefined ? '' : res.slice(m.index + match.length));
+        + res.slice(m.index + match.length);
     }
   }
 

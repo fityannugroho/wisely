@@ -10,6 +10,6 @@ test('large text', () => {
   const res = wisely({ text, phrases: ['pulau'] });
   const diff = performance.now() - startTime;
 
-  console.log(`Perf: ${diff}ms`);
+  console.log(`Perf: ${String(diff)}ms`);
   expect(res).not.toContain('pulau');
 });
