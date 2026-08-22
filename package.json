@@ -21,7 +21,7 @@
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
     "build": "tsdown",
-    "prepublish": "npm run build"
+    "prepublishOnly": "pnpm run build"
   },
   "repository": {
     "type": "git",
