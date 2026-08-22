@@ -9,10 +9,13 @@
     "moduleResolution": "NodeNext",
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
+    "types": [
+      "node"
+    ],
     "paths": {
       "~/*": [
-        "src/*"
+        "./src/*"
       ],
     },
     "strict": true,
