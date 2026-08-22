@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import coreWisely, {
-  CharSet,
+  type CharSet,
   CharSets,
   Options as CoreOptions,
   ValidationError,
@@ -68,5 +68,6 @@ export default function wisely(options: Options): string {
 
 // Export from core
 export {
-  CharSet, CharSets, ValidationError, isCharSetValid, isPhraseValid,
+  CharSets, ValidationError, isCharSetValid, isPhraseValid,
 };
+export type { CharSet };
