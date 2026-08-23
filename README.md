@@ -7,8 +7,8 @@ Obfuscating text or phrases with random uncommon characters to avoid banning. Ev
 
 ## Prerequisites
 
-- Node.js 18 or higher
-- npm 9 or higher
+- Node.js 20 or higher
+- pnpm 11 or higher
 
 ## Install
 

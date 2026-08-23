@@ -9,16 +9,11 @@
     "moduleResolution": "NodeNext",
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": "./",
+    "types": ["node"],
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
+      "~/*": ["./src/*"]
     },
-    "strict": true,
+    "strict": true
   },
-  "exclude": [
-    "node_modules",
-    "lib"
-  ]
+  "exclude": ["node_modules", "lib"]
 }
